@@ -30,14 +30,6 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  void messagesStream() async {
-    await for (var snapshots in _firestore.collection('messages').snapshots()) {
-      for (var messages in snapshots.documents) {
-        print(messages.data);
-      }
-    }
-  }
-
   @override
   void initState() {
     super.initState();
@@ -54,9 +46,8 @@ class _ChatScreenState extends State<ChatScreen> {
           IconButton(
               icon: Icon(Icons.close),
               onPressed: () {
-//                _auth.signOut();
-//                Navigator.pop(context);
-                messagesStream();
+                _auth.signOut();
+                Navigator.pop(context);
               }),
         ],
         title: Text('⚡️Chat'),
@@ -118,7 +109,7 @@ class MessagesStream extends StatelessWidget {
             ),
           );
         } else {
-          final messages = snapshot.data.documents;
+          final messages = snapshot.data.documents.reversed;
           List<MessageBubble> messageBubbles = [];
           for (var message in messages) {
             final messageText = message.data['text'];
@@ -134,6 +125,7 @@ class MessagesStream extends StatelessWidget {
           }
           return Expanded(
             child: ListView(
+              reverse: true,
               padding: EdgeInsets.symmetric(
                 horizontal: 10.0,
                 vertical: 20.0,
